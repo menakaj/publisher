@@ -7,6 +7,7 @@ import AssetView from "./components/Base/AssetView";
 import CreateApp from "./components/Application/Create/CreateApp";
 import NotFound from "./components/Error/NotFound";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import 'antd/dist/antd.css'
 
 
 class BaseRenderer extends Component {

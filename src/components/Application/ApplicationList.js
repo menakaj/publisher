@@ -1,15 +1,55 @@
 import React, {Component} from 'react'
 import ApplicationView from "./View/ApplicationView";
-import Drawer from 'material-ui/Drawer';
-import Table, {TableBody, TableCell, TableHead, TableRow, TableSortLabel,} from 'material-ui/Table';
+import {Table, Button, Modal} from 'antd'
 
-const columnData = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Application Name' },
-    { id: 'version', numeric: false, disablePadding: false, label: 'Version' },
-    { id: 'category', numeric: false, disablePadding: false, label: 'Category' },
-    { id: 'platform', numeric: false, disablePadding: false, label: 'Platform' },
-    { id: 'state', numeric: false, disablePadding: false, label: 'State' },
-];
+const confirm = (id) => {
+    Modal.confirm({
+        title: 'Confirm',
+        content: 'Bla bla ...',
+        okText: 'OK',
+        cancelText: 'Cancel',
+    });
+};
+
+const columns = [{
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+    width: 100
+}, {
+        title: 'Version',
+        dataIndex: 'version',
+        key: 'version',
+        width: 100,
+        sorter: (a, b) => a.version > b.version,
+    }, {
+        title: 'Category',
+        dataIndex: 'category',
+            key: 'category',
+            width: 100,
+        },{
+    title: 'Platform',
+    dataIndex: 'os',
+    key: 'os',
+    width: 100
+},{
+    title: 'State',
+    dataIndex: 'state',
+    key: 'state',
+    width: 100
+},
+    {
+        title: '',
+        key: 'operation',
+        dataIndex: 'operation',
+        width: 100,
+        render: (operation) => {return (
+            <span>
+                <Button type="primary" onClick={(e) => { e.stopPropagation(); confirm(operation); }}>Edit</Button>
+        </span>
+        );},
+    }];
+
 
 
 class ApplicationList extends Component {
@@ -42,6 +82,13 @@ class ApplicationList extends Component {
         this.toggleDrawer("right", false);
     }
 
+    handleClick() {
+        console.log("Edit clicked");
+        this.handleClose();
+    }
+
+
+
     getApps() {
         return [
             {name: "App1",
@@ -68,7 +115,9 @@ class ApplicationList extends Component {
 
     }
 
-    onClickHandler(app) {
+    onClickHandler(e, app) {
+        e.stopPropagation();
+        console.log(e.target);
         console.log("In App List: " + app);
         this.toggleDrawer('right', true);
         this.setState({selectedApp: app});
@@ -76,6 +125,7 @@ class ApplicationList extends Component {
 
 
     handleRequestSort(event, property) {
+        event.stopPropagation();
         const orderBy = property;
         let order = 'desc';
         console.log(property);
@@ -104,61 +154,21 @@ class ApplicationList extends Component {
         //     return <Application key={app.name} app={app} onClickHandler={this.onClickHandler.bind(this)}/>
         // }):<div>No Apps</div>;
         return <div>
-            <Table>
-            <TableHead>
-                <TableRow>
-                    {columnData.map(column => {
-                        return (
-                            <TableCell
-                                key={column.id}
-                                numeric={column.numeric}
-                                disablePadding={column.disablePadding}>
-                                <TableSortLabel
-                                    active={orderBy === column.id}
-                                    direction={order}
-                                    onClick={event => this.handleRequestSort(event, column.id)}>
-                                    {column.label}
-                                </TableSortLabel>
-                            </TableCell>
-                        );
-                    })}
-                </TableRow>
-            </TableHead>
-                <TableBody>
-                    {this.state.apps.map(n => {
-                        // const isSelected = this.isSelected(n.id);
-                        return (
-                            <TableRow
-                                hover
-                                key={n.name}
-                                onClick={event => this.onClickHandler(n)}>
-                                <TableCell >
-                                    {n.name}
-                                </TableCell>
-                                <TableCell>
-                                    {n.version}
-                                </TableCell>
-                                <TableCell >
-                                    {n.category}
-                                </TableCell>
-                                <TableCell >
-                                    {n.os}
-                                </TableCell>
-                                <TableCell >
-                                    {n.state}
-                                </TableCell>
-                            </TableRow>
-                        );
-                    })}
-                </TableBody>
-            </Table>
-            <Drawer
-                anchor="right"
-                open={this.state.open.right}
-                width="200px"
-                onRequestClose={this.handleClose.bind(this)}>
-                {appView}
-            </Drawer>
+            <Table
+                columns={columns}
+                dataSource={this.state.apps}
+                bordered
+                size="middle"
+                onRowClick={() => {console.log("Table row clicked")}}
+                scroll={{ x: '80%', y: 240 }}
+            />
+            {/*<Drawer*/}
+                {/*anchor="right"*/}
+                {/*open={this.state.open.right}*/}
+                {/*width="200px"*/}
+                {/*onRequestClose={this.handleClose.bind(this)}>*/}
+                {/*{appView}*/}
+            {/*</Drawer>*/}
 
         </div>;
     }

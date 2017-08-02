@@ -13,9 +13,6 @@ class ApplicationView extends Component {
     render() {
         console.log(this.props.app);
         return <div>
-            <div onClick={() => {console.log("Edit Clicked")}}><Button fab color="primary">
-                <ModeEditIcon />
-        </Button></div>
             {this.props.app.name}
             <div>Edit Button</div>
             <sl>
