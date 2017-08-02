@@ -10,7 +10,6 @@ class Application extends Component {
     handleOnClickRow() {
         console.log(this.props.app.name);
         this.props.onClickHandler(this.props.app);
-
     }
 
     render() {

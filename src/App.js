@@ -6,6 +6,7 @@ import Login from "./components/User/Login";
 import AssetView from "./components/Base/AssetView";
 import CreateApp from "./components/Application/Create/CreateApp";
 import NotFound from "./components/Error/NotFound";
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 
 class BaseRenderer extends Component {
@@ -45,6 +46,7 @@ class Publisher extends Component {
   render() {
     return (
         <div>
+            <MuiThemeProvider>
             <Router basename="/publisher">
                 <div>
                 <Switch>
@@ -54,7 +56,7 @@ class Publisher extends Component {
                 </Switch>
                 </div>
             </Router>
-
+            </MuiThemeProvider>
         </div>
     );
   }

@@ -1,22 +1,34 @@
 import React, {Component} from 'react'
 import Application from "./Application";
 import ApplicationView from "./View/ApplicationView";
-import SlidingPane from 'react-sliding-pane'
-import 'react-sliding-pane/dist/react-sliding-pane.css';
+import Drawer from 'material-ui/Drawer';
+
 
 class ApplicationList extends Component {
 
     constructor() {
-        super()
-        this.apps = []
+        super();
+        this.apps = [];
         this.state = {
             selectedApp: {},
-            isRightSlider: false
-        }
+            open: {left:false}
+        };
+
     }
 
     componentWillMount() {
         this.apps = this.getApps();
+    }
+
+    toggleDrawer = (side, open) => {
+        const drawerState = {};
+        drawerState[side] = open;
+        this.setState({ open: drawerState }, console.log("Open Drawer"));
+    };
+
+    handleClose() {
+        console.log("Close");
+        this.toggleDrawer("right", false);
     }
 
     getApps() {
@@ -46,11 +58,11 @@ class ApplicationList extends Component {
     }
 
     onClickHandler(app) {
-        console.log("In App List: " +app);
-        this.setState({selectedApp:app, isRightSlider:true});
-
-        // this.selectedApp = app;
+        console.log("In App List: " + app);
+        this.toggleDrawer('right', true);
+        this.setState({selectedApp: app});
     }
+
 
     render() {
 
@@ -74,16 +86,18 @@ class ApplicationList extends Component {
                 {apps}
                 </tbody>
             </table>
-            <SlidingPane
-                isOpen={ this.state.isRightSlider }
-                title={this.state.selectedApp.name}
-                from='right'
-                width='50%'
-                onRequestClose={ () => this.setState({ isRightSlider: false }) }>
-                <div>{appView}</div>
-            </SlidingPane>
+
+            <Drawer
+                anchor="right"
+                open={this.state.open.right}
+                width="200px"
+                onRequestClose={this.handleClose.bind(this)}>
+                {appView}
+            </Drawer>
+
         </div>;
     }
 }
+
 
 export default ApplicationList;
