@@ -13,51 +13,50 @@ class BaseRenderer extends Component {
     constructor() {
         super();
         this.state = {
-            user:"Menaka"
+            user: "Menaka"
         }
     }
 
     render() {
         if (this.state.user) {
-        return (
-            <div className="container">
-                <Router>
-                    <div>
-                        <Header/>
-                        <Switch>
-                            <Redirect exact from="/" to="/publisher/assets/apps"/>
-                            <Route exact path="/publisher/assets/apps" component={AssetView}/>
-                            <Route path="/publisher/assets/apps/create" component={CreateApp}/>
-                            <Route component={NotFound}/>
-                        </Switch>
-                    </div>
-                </Router>
+            return (
+                <div className="container">
+                    <Router>
+                        <div>
+                            <Header/>
+                            <Switch>
+                                <Redirect exact from="/" to="/publisher/assets/apps"/>
+                                <Route exact path="/publisher/assets/apps" component={AssetView}/>
+                                <Route component={NotFound}/>
+                            </Switch>
+                        </div>
+                    </Router>
 
-            </div>
-        );
+                </div>
+            );
         }
         return (<div>
-                    <Redirect to={"/login"}/>
-                </div>);
+            <Redirect to={"/login"}/>
+        </div>);
     }
 }
 
 class Publisher extends Component {
-  render() {
-    return (
-        <div>
-            <Router basename="/publisher">
-                <div>
-                <Switch>
-                    <Route path={"/login"} component={Login}/>
-                    <Route path={"/logout"} component={Login}/>
-                    <Route component={BaseRenderer}/>
-                </Switch>
-                </div>
-            </Router>
-        </div>
-    );
-  }
+    render() {
+        return (
+            <div>
+                <Router basename="/publisher">
+                    <div>
+                        <Switch>
+                            <Route path={"/login"} component={Login}/>
+                            <Route path={"/logout"} component={Login}/>
+                            <Route component={BaseRenderer}/>
+                        </Switch>
+                    </div>
+                </Router>
+            </div>
+        );
+    }
 }
 
 export default Publisher;
