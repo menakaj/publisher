@@ -90,6 +90,18 @@ class CreateApp extends Component {
                 sm: {span: 14},
             },
         };
+        const tailFormItemLayout = {
+            wrapperCol: {
+                xs: {
+                    span: 24,
+                    offset: 0,
+                },
+                sm: {
+                    span: 14,
+                    offset: 6,
+                },
+            },
+        };
 
         const uploadButton = (
             <div>
@@ -101,13 +113,7 @@ class CreateApp extends Component {
         return (<div>
             <h3>{this.props.app.title}</h3>
             <Form onSubmit={this.handleSubmit}>
-                <FormItem>
-                    <Button
-                        type="primary"
-                        htmlType="submit">
-                        Create App
-                    </Button>
-                </FormItem>
+
                 <FormItem
                     {...formItemLayout}
                     label="Title">
@@ -123,6 +129,16 @@ class CreateApp extends Component {
                         <Input.TextArea style={{width: '100%'}} autosize={{minRows: 2}}/>
                     )}
 
+                </FormItem>
+                <FormItem
+                    {...formItemLayout}
+                    label="Version"
+                    hasfeedback>
+                    {getFieldDecorator('version', {
+                        rules: [{required: true, message: 'Please specify the app version!'}],
+                    })(
+                        <Input style={{width: '100%'}}/>
+                    )}
                 </FormItem>
                 <FormItem
                     {...formItemLayout}
@@ -193,6 +209,13 @@ class CreateApp extends Component {
                             {this.state.iconImage === 1 ? null : uploadButton}
                         </Upload>)}
                     </div>
+                </FormItem>
+                <FormItem {...tailFormItemLayout}>
+                    <Button
+                        type="primary"
+                        htmlType="submit">
+                        Create App
+                    </Button>
                 </FormItem>
 
             </Form></div>)

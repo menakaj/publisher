@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Button, Select, Form, Icon, Input, Upload} from 'antd'
+import {Button, Select, Form, Icon, Input, Upload, message} from 'antd'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -8,24 +8,48 @@ class AppCreateStep1 extends Component {
 
     constructor() {
         super();
-        this.file="";
-        this.errorMsg="";
-        this.hiddenUpload="";
+        this.file = "";
+        this.webclip = "";
+        this.errorMsg = "";
+        this.hiddenUpload = "";
         this.app = {};
         this.state = {
             confirmDirty: false,
-            showDialog:false,
-            anchorEl:undefined,
+            showDialog: false,
+            anchorEl: undefined,
             showMenu: false,
             selectedIndex: 1,
 
         }
     }
 
+    beforeUpload(fileb) {
+        console.log("Before upload checking " + this.file);
+        console.log(fileb);
+        let filetype = "";
+        let isSupported = "";
+
+        if (this.file === ".apk") {
+            isSupported = fileb.type === 'application/vnd.android.package-archive';
+            console.log("Android " + isSupported);
+            filetype = "Upload a correct .apk file!";
+        } else {
+            isSupported = fileb.name.indexOf(".ipa") !== -1;
+            console.log("in iOS " + fileb.type);
+            filetype = "Upload a correct .ipa file!";
+        }
+        if (!isSupported) {
+            message.error(filetype);
+
+        }
+
+        return isSupported;
+    }
+
     checkConfirm = (rule, value, callback) => {
         const form = this.props.form;
         if (value && this.state.confirmDirty) {
-            form.validateFields(['confirm'], { force: true });
+            form.validateFields(['confirm'], {force: true});
         }
         callback();
     };
@@ -45,17 +69,20 @@ class AppCreateStep1 extends Component {
     handleSelectChange = (value) => {
         if (value !== "webClip") {
             this.hiddenUpload = "";
-            this.file = (value === "android")?".apk":".ipa";
+            this.file = (value === "android") ? ".apk" : ".ipa";
             this.errorMsg = 'Please upload ' + this.file + ' file';
         } else {
-            this.hiddenUpload = "hidden"
+            this.file = "web";
         }
         console.log(value);
 
     };
 
-    platforms = [{value:"ios", label:"iOS"}, {value:"android", label:"Android"}, {value:"webclip", label:"Web Clip"}];
-    storeTypes = [{value:"enterprise", label:"Enterprise"}, {value:"public", label:"Public"}];
+    platforms = [{value: "ios", label: "iOS"}, {value: "android", label: "Android"}, {
+        value: "webclip",
+        label: "Web Clip"
+    }];
+    storeTypes = [{value: "enterprise", label: "Enterprise"}, {value: "public", label: "Public"}];
 
     normFile = (e) => {
         console.log('Upload event:', e);
@@ -66,15 +93,15 @@ class AppCreateStep1 extends Component {
     };
 
     render() {
-        const { getFieldDecorator } = this.props.form;
+        const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
             labelCol: {
-                xs: { span: 24 },
-                sm: { span: 6 },
+                xs: {span: 24},
+                sm: {span: 6},
             },
             wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 14 },
+                xs: {span: 24},
+                sm: {span: 14},
             },
         };
 
@@ -123,7 +150,7 @@ class AppCreateStep1 extends Component {
                         validator: this.checkConfirm,
                     }],
                 })(
-                    <Select onChange={this.handleSelectChange}>
+                    <Select>
                         <Option value="enterprise">Enterprise</Option>
                         <Option value="public">Public</Option>
                     </Select>
@@ -134,33 +161,44 @@ class AppCreateStep1 extends Component {
                 label="Title"
                 hasFeedback>
                 {getFieldDecorator('title', {
-                    rules: [{ required: true, message: 'Please specify the app title!' }],
+                    rules: [{required: true, message: 'Please specify the app title!'}],
                 })(
-                    <Input style={{ width: '100%' }} />
+                    <Input style={{width: '100%'}}/>
                 )}
             </FormItem>
 
+            {this.file !== "web" ?
 
-
-            <FormItem
-                {...formItemLayout}
-                label=" "
-                hasFeedback>
-                <div className="dropbox" >
-                    {getFieldDecorator('dragger', {
-                        valuePropName: 'file',
-                        getValueFromEvent: this.normFile,
-                        rules: [{ required: true, message:this.errorMsg }],
-                    })(
-                        <Upload.Dragger {...draggerProps} name="file" action="/upload.do">
-                            <p className="ant-upload-drag-icon">
-                                <Icon type="upload" />
-                            </p>
-                            <p className="ant-upload-text">Click or drag {this.file} file to this area to upload</p>
+                <FormItem
+                    {...formItemLayout}
+                    label="Upload app"
+                    hasFeedback>
+                    <div className="dropbox">
+                        {getFieldDecorator('dragger', {
+                            valuePropName: 'file',
+                            getValueFromEvent: this.normFile,
+                            rules: [{required: true, message: this.errorMsg}],
+                        })(
+                            <Upload.Dragger {...draggerProps} beforeUpload={this.beforeUpload.bind(this)} name="file"
+                                            action="/upload.do">
+                                <p className="ant-upload-drag-icon">
+                                    <Icon type="upload"/>
+                                </p>
+                                <p className="ant-upload-text">Click or drag {this.file} file to this area to upload</p>
                             </Upload.Dragger>
+                        )}
+                    </div>
+                </FormItem> : <FormItem
+                    {...formItemLayout}
+                    label="Web Clip URL"
+                    hasFeedback>
+                    {getFieldDecorator('webClipURL', {
+                        rules: [{required: true, message: 'Please specify web clip url!'}],
+                    })(
+                        <Input style={{width: '100%'}} placeholder="http://example.com"/>
                     )}
-                </div>
-            </FormItem>
+                </FormItem>
+            }
 
             <FormItem {...tailFormItemLayout}>
                 <Button type="primary" htmlType="submit">Continue ></Button>
