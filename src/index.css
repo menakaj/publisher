@@ -3,3 +3,15 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.deleted {
+    color: #ff2227
+}
+
+.inProgress {
+    color: #feaa11
+}
+
+.published {
+    color: #37bf47
+}

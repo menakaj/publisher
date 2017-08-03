@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 import React, {Component} from 'react'
 import {Button, Modal, Table} from 'antd'
 import ApplicationView from "./View/ApplicationView";
@@ -8,20 +26,6 @@ const confirm = (id) => {
         okText: 'OK',
         cancelText: 'Cancel',
     });
-};
-
-
-
-const styles = {
-    deleted: {
-        color: '#ff0204'
-    },
-    inprogress: {
-        color: '#feaa11'
-    },
-    published: {
-        color: "#37bf47"
-    }
 };
 
 const columns = [{
@@ -52,9 +56,9 @@ const columns = [{
     width: 100,
     render: (state) => {
 
-        const deleted = <span style={styles.deleted}>Deleted</span>;
-        const InProgress = <sapn style={styles.inprogress}>In Progress</sapn>;
-        const published = <span style={styles.published}>Published</span>;
+        const deleted = <span className="deleted">Deleted</span>;
+        const InProgress = <sapn className="inProgress">In Progress</sapn>;
+        const published = <span className="published">Published</span>;
         return (state === 'Deleted'?deleted:(state === 'Published'?published:InProgress))
     }
 },
@@ -88,7 +92,8 @@ class ApplicationList extends Component {
             order: "asc",
             orderBy: "name",
             selectedApp: {},
-            open: {left: false}
+            open: {left: false},
+            searchedApps:[]
         };
 
     }
@@ -96,12 +101,17 @@ class ApplicationList extends Component {
     onRowClicked(app) {
         // e.stopPropagation();
         console.log(app.name);
+
         this.setState({showDetails:true, selectedApp:app}, console.log(this.state.showDetails));
 
     }
 
     componentWillMount() {
-        this.setState({apps: this.getApps()});
+        this.setState({apps: this.getApps(), searchedApps: this.getApps()});
+    }
+
+    componentDidMount() {
+        console.log("Did mount");
     }
 
     toggleDrawer = (side, open) => {
@@ -121,36 +131,41 @@ class ApplicationList extends Component {
 
 
     getApps() {
+
+        /**
+         * Call backend api and get the list of apps.
+         * axios.get().then()
+         * */
         return [
             {
                 name: "App1",
                 category: "c1",
-                version: "v1.0",
-                os: "Android4",
+                version: "5.0",
+                os: "Android",
                 description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
                 state: "Published"
             },
             {
                 name: "App2",
                 category: "c3",
-                version: "v1.0",
-                os: "iOS3",
+                version: "4.0",
+                os: "iOS",
                 description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
                 state: "InReview"
             },
             {
                 name: "App3",
                 category: "c1",
-                version: "v2.0",
-                os: "iOS1",
+                version: "2.0",
+                os: "iOS",
                 description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
                 state: "Published"
             },
             {
                 name: "App4",
                 category: "c2",
-                version: "v14.0",
-                os: "WebClip1",
+                version: "14.0",
+                os: "WebClip",
                 description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
                 state: "Deleted"
             }
@@ -196,10 +211,12 @@ class ApplicationList extends Component {
 
 
     render() {
+        console.log(this.props.searchedText);
         return <div>
+
             <Table
                 columns={columns}
-                dataSource={this.state.apps}
+                dataSource={this.state.searchedApps}
                 bordered
                 size="middle"
                 onRowClick={this.onRowClicked.bind(this)}
