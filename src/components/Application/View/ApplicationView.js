@@ -10,16 +10,16 @@ class ApplicationView extends Component {
     }
 
     render() {
-        console.log(this.props.app);
+        // console.log(this.props.app);
+        const app = this.props.app;
         return <div>
-            {this.props.app.name}
-            <div>Edit Button</div>
-            <sl>
-                <li>Image------------------------------------------</li>
-                <li>App Name</li>
-                <li>Description</li>
-                <li>Version</li>
-            </sl>
+
+            <ul>
+                <li>Name: {app.name}</li>
+                <li>Description: {app.description}</li>
+                <li>Version: {app.version}</li>
+                <li>State: {app.state}</li>
+            </ul>
         </div>
 
     }

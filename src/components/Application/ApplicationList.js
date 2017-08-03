@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {Button, Modal, Table} from 'antd'
+import ApplicationView from "./View/ApplicationView";
 
 const confirm = (id) => {
     Modal.confirm({
@@ -7,6 +8,20 @@ const confirm = (id) => {
         okText: 'OK',
         cancelText: 'Cancel',
     });
+};
+
+
+
+const styles = {
+    deleted: {
+        color: '#ff0204'
+    },
+    inprogress: {
+        color: '#feaa11'
+    },
+    published: {
+        color: "#37bf47"
+    }
 };
 
 const columns = [{
@@ -34,7 +49,14 @@ const columns = [{
     title: 'State',
     dataIndex: 'state',
     key: 'state',
-    width: 100
+    width: 100,
+    render: (state) => {
+
+        const deleted = <span style={styles.deleted}>Deleted</span>;
+        const InProgress = <sapn style={styles.inprogress}>In Progress</sapn>;
+        const published = <span style={styles.published}>Published</span>;
+        return (state === 'Deleted'?deleted:(state === 'Published'?published:InProgress))
+    }
 },
     {
         title: '',
@@ -62,11 +84,19 @@ class ApplicationList extends Component {
         this.order = "asc";
         this.state = {
             apps: [],
+            showDetails: false,
             order: "asc",
             orderBy: "name",
             selectedApp: {},
             open: {left: false}
         };
+
+    }
+
+    onRowClicked(app) {
+        // e.stopPropagation();
+        console.log(app.name);
+        this.setState({showDetails:true, selectedApp:app}, console.log(this.state.showDetails));
 
     }
 
@@ -136,6 +166,12 @@ class ApplicationList extends Component {
         this.setState({selectedApp: app});
     }
 
+    handleOK() {
+        this.setState({
+            showDetails: false,
+        });
+    }
+
 
     handleRequestSort(event, property) {
         event.stopPropagation();
@@ -166,17 +202,22 @@ class ApplicationList extends Component {
                 dataSource={this.state.apps}
                 bordered
                 size="middle"
-                onRowClick={() => {
-                    console.log("Table row clicked")
-                }}
+                onRowClick={this.onRowClicked.bind(this)}
                 scroll={{x: '80%', y: 240}}
             />
-
+            <Modal
+                visible={this.state.showDetails}
+                title={this.state.selectedApp.name}
+                onOk={this.handleOK.bind(this)}
+                footer={[
+                    <Button key="back" size="large" onClick={this.handleOK.bind(this)}>OK</Button>,
+                ]}
+            >
+                <ApplicationView app={this.state.selectedApp}/>
+            </Modal>;
         </div>;
     }
 }
-
-const table = {}
 
 
 export default ApplicationList;
