@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
-import ApplicationView from "./View/ApplicationView";
-import {Table, Button, Modal} from 'antd'
+import {Button, Modal, Table} from 'antd'
 
 const confirm = (id) => {
     Modal.confirm({
@@ -16,22 +15,22 @@ const columns = [{
     key: 'name',
     width: 100
 }, {
-        title: 'Version',
-        dataIndex: 'version',
-        key: 'version',
-        width: 100,
-        sorter: (a, b) => a.version > b.version,
-    }, {
-        title: 'Category',
-        dataIndex: 'category',
-            key: 'category',
-            width: 100,
-        },{
+    title: 'Version',
+    dataIndex: 'version',
+    key: 'version',
+    width: 100,
+    sorter: (a, b) => a.version > b.version,
+}, {
+    title: 'Category',
+    dataIndex: 'category',
+    key: 'category',
+    width: 100,
+}, {
     title: 'Platform',
     dataIndex: 'os',
     key: 'os',
     width: 100
-},{
+}, {
     title: 'State',
     dataIndex: 'state',
     key: 'state',
@@ -42,13 +41,17 @@ const columns = [{
         key: 'operation',
         dataIndex: 'operation',
         width: 100,
-        render: (operation) => {return (
-            <span>
-                <Button type="default" icon="edit" onClick={(e) => { e.stopPropagation(); confirm(operation); }}/>
+        render: (operation) => {
+            return (
+                <span>
+                <Button type="default" icon="edit" onClick={(e) => {
+                    e.stopPropagation();
+                    confirm(operation);
+                }}/>
         </span>
-        );},
+            );
+        },
     }];
-
 
 
 class ApplicationList extends Component {
@@ -62,19 +65,19 @@ class ApplicationList extends Component {
             order: "asc",
             orderBy: "name",
             selectedApp: {},
-            open: {left:false}
+            open: {left: false}
         };
 
     }
 
     componentWillMount() {
-        this.setState({apps:this.getApps()});
+        this.setState({apps: this.getApps()});
     }
 
     toggleDrawer = (side, open) => {
         const drawerState = {};
         drawerState[side] = open;
-        this.setState({ open: drawerState });
+        this.setState({open: drawerState});
     };
 
     handleClose() {
@@ -87,29 +90,40 @@ class ApplicationList extends Component {
     }
 
 
-
     getApps() {
         return [
-            {name: "App1",
-            category: "c1",
-            version: "v1.0",
-            os: "Android4",
-            state: "Published"},
-            {name: "App2",
+            {
+                name: "App1",
+                category: "c1",
+                version: "v1.0",
+                os: "Android4",
+                description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
+                state: "Published"
+            },
+            {
+                name: "App2",
                 category: "c3",
                 version: "v1.0",
                 os: "iOS3",
-                state: "InReview"},
-            {name: "App3",
+                description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
+                state: "InReview"
+            },
+            {
+                name: "App3",
                 category: "c1",
                 version: "v2.0",
                 os: "iOS1",
-                state: "Published"},
-            {name: "App4",
+                description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
+                state: "Published"
+            },
+            {
+                name: "App4",
                 category: "c2",
                 version: "v14.0",
                 os: "WebClip1",
-                state: "Deleted"}
+                description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
+                state: "Deleted"
+            }
         ]
 
     }
@@ -141,28 +155,28 @@ class ApplicationList extends Component {
         console.log(apps);
         console.log(orderBy + order);
 
-        this.setState({ apps:apps, order:order, orderBy:orderBy});
+        this.setState({apps: apps, order: order, orderBy: orderBy});
     };
 
 
     render() {
-          return <div>
+        return <div>
             <Table
                 columns={columns}
                 dataSource={this.state.apps}
                 bordered
                 size="middle"
-                onRowClick={() => {console.log("Table row clicked")}}
-                scroll={{ x: '80%', y: 240 }}
+                onRowClick={() => {
+                    console.log("Table row clicked")
+                }}
+                scroll={{x: '80%', y: 240}}
             />
 
         </div>;
     }
 }
 
-const table = {
-
-}
+const table = {}
 
 
 export default ApplicationList;

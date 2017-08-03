@@ -1,6 +1,6 @@
 //Create modal
 import React, {Component} from 'react'
-import {Form, Input, Select, Icon, Upload, Modal, Button} from 'antd'
+import {Button, Form, Icon, Input, Modal, Select, Upload} from 'antd'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
