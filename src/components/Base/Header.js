@@ -1,7 +1,5 @@
 import React, {Component} from 'react'
-import Notifications from 'material-ui-icons/Notifications'
-import Avatar from 'material-ui/Avatar'
-import PersonPinIcon from 'material-ui-icons/PersonPin';
+import {Avatar, Badge} from 'antd'
 
 const styles = {
     title: {
@@ -26,10 +24,8 @@ class Header extends Component {
         return <div style={styles.header}>
             <span style={styles.title}><h3>WSO2 IoT App Publisher</h3></span>
             <nav>
-                <Notifications/>
-                <Avatar>
-                    <PersonPinIcon />
-                </Avatar>
+                <Badge count={1}><Avatar shape="circle" icon="notification" /></Badge>
+                <Avatar size="large" icon="user" />
             </nav>
         </div>;
     }

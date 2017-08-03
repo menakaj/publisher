@@ -5,7 +5,6 @@ import {Table, Button, Modal} from 'antd'
 const confirm = (id) => {
     Modal.confirm({
         title: 'Confirm',
-        content: 'Bla bla ...',
         okText: 'OK',
         cancelText: 'Cancel',
     });
@@ -45,7 +44,7 @@ const columns = [{
         width: 100,
         render: (operation) => {return (
             <span>
-                <Button type="primary" onClick={(e) => { e.stopPropagation(); confirm(operation); }}>Edit</Button>
+                <Button type="default" icon="edit" onClick={(e) => { e.stopPropagation(); confirm(operation); }}/>
         </span>
         );},
     }];
@@ -147,13 +146,7 @@ class ApplicationList extends Component {
 
 
     render() {
-        const { order, orderBy } = this.state;
-        let appView = <ApplicationView key={this.state.selectedApp.name} app={this.state.selectedApp}/>;
-
-        // let apps = (this.apps.length >= 1)?this.apps.map(app => {
-        //     return <Application key={app.name} app={app} onClickHandler={this.onClickHandler.bind(this)}/>
-        // }):<div>No Apps</div>;
-        return <div>
+          return <div>
             <Table
                 columns={columns}
                 dataSource={this.state.apps}
@@ -162,13 +155,6 @@ class ApplicationList extends Component {
                 onRowClick={() => {console.log("Table row clicked")}}
                 scroll={{ x: '80%', y: 240 }}
             />
-            {/*<Drawer*/}
-                {/*anchor="right"*/}
-                {/*open={this.state.open.right}*/}
-                {/*width="200px"*/}
-                {/*onRequestClose={this.handleClose.bind(this)}>*/}
-                {/*{appView}*/}
-            {/*</Drawer>*/}
 
         </div>;
     }

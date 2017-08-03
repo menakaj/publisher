@@ -1,14 +1,19 @@
 import React, {Component} from 'react'
-import TextField from 'material-ui/TextField';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import List, { ListItem, ListItemText } from 'material-ui/List';
-import Button from 'material-ui/Button';
+import {Button, Select, Form, Icon, Input, Upload} from 'antd'
 
-class CreateAppModal extends Component {
+const FormItem = Form.Item;
+const Option = Select.Option;
+
+class AppCreateStep1 extends Component {
 
     constructor() {
         super();
+        this.file="";
+        this.errorMsg="";
+        this.hiddenUpload="";
+        this.app = {};
         this.state = {
+            confirmDirty: false,
             showDialog:false,
             anchorEl:undefined,
             showMenu: false,
@@ -17,87 +22,155 @@ class CreateAppModal extends Component {
         }
     }
 
-    platforms = ["iOS", "Android", "Web Clip"]
-    button = undefined;
-
-    handleOnSubmit() {
-
-    }
-
-    handleMenuItemClick = (event, index) => {
-        this.setState({ selectedIndex: index, open: false });
+    checkConfirm = (rule, value, callback) => {
+        const form = this.props.form;
+        if (value && this.state.confirmDirty) {
+            form.validateFields(['confirm'], { force: true });
+        }
+        callback();
     };
 
-    handleRequestClose = () => {
-        this.setState({ open: false });
+    handleSubmit = (e) => {
+        e.preventDefault();
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            if (!err) {
+                this.props.stepUp(values);
+                console.log('Received values of form: ', values);
+            }
+        });
+
+
     };
 
+    handleSelectChange = (value) => {
+        if (value !== "webClip") {
+            this.hiddenUpload = "";
+            this.file = (value === "android")?".apk":".ipa";
+            this.errorMsg = 'Please upload ' + this.file + ' file';
+        } else {
+            this.hiddenUpload = "hidden"
+        }
+        console.log(value);
 
-    handleClickListItem = event => {
-        this.setState({ open: true, anchorEl: event.currentTarget });
     };
 
+    platforms = [{value:"ios", label:"iOS"}, {value:"android", label:"Android"}, {value:"webclip", label:"Web Clip"}];
+    storeTypes = [{value:"enterprise", label:"Enterprise"}, {value:"public", label:"Public"}];
+
+    normFile = (e) => {
+        console.log('Upload event:', e);
+        if (Array.isArray(e)) {
+            return e;
+        }
+        return e && e.file;
+    };
 
     render() {
-        return (<div>
-            <form onSubmit={this.handleOnSubmit}>
-            <label>Platform: </label>
-            <List>
-                <ListItem
-                    aria-haspopup="true"
-                    aria-controls="lock-menu"
-                    onClick={this.handleClickListItem}>
-                    <ListItemText
-                        primary={this.platforms[this.state.selectedIndex]}/>
-                </ListItem>
-            </List>
-            <Menu
-                id="lock-menu"
-                anchorEl={this.state.anchorEl}
-                open={this.state.open}
-                onRequestClose={this.handleRequestClose}>
-                {this.platforms.map((option, index) =>
-                    <MenuItem
-                        key={option}
-                        selected={index === this.state.selectedIndex}
-                        onClick={event => this.handleMenuItemClick(event, index)}
-                    >
-                        {option}
-                    </MenuItem>,
+        const { getFieldDecorator } = this.props.form;
+        const formItemLayout = {
+            labelCol: {
+                xs: { span: 24 },
+                sm: { span: 6 },
+            },
+            wrapperCol: {
+                xs: { span: 24 },
+                sm: { span: 14 },
+            },
+        };
+
+        const tailFormItemLayout = {
+            wrapperCol: {
+                xs: {
+                    span: 24,
+                    offset: 0,
+                },
+                sm: {
+                    span: 14,
+                    offset: 6,
+                },
+            },
+        };
+
+        const draggerProps = {
+            multiple: false
+        }
+
+        return ( <Form onSubmit={this.handleSubmit}>
+            <FormItem
+                {...formItemLayout}
+                label="Platform"
+                hasFeedback>
+                {getFieldDecorator('platform', {
+                    rules: [{
+                        required: true, message: 'Please select your platform',
+                    }],
+                })(
+                    <Select placeHolder="Select the app platform" onChange={this.handleSelectChange}>
+                        <Option value="ios">iOS</Option>
+                        <Option value="android">Android</Option>
+                        <Option value="webClip">Web Clip</Option>
+                    </Select>
                 )}
-            </Menu>
-
-            <TextField
-                required
-                id="storeType"
+            </FormItem>
+            <FormItem
+                {...formItemLayout}
                 label="Store Type"
-                defaultValue=" "
-                margin="normal"/>
-            <br/>
-            <TextField
-                required
-                id="title"
+                hasFeedback>
+                {getFieldDecorator('storeTypes', {
+                    rules: [{
+                        required: true, message: 'Please input your password!',
+                    }, {
+                        validator: this.checkConfirm,
+                    }],
+                })(
+                    <Select onChange={this.handleSelectChange}>
+                        <Option value="enterprise">Enterprise</Option>
+                        <Option value="public">Public</Option>
+                    </Select>
+                )}
+            </FormItem>
+            <FormItem
+                {...formItemLayout}
                 label="Title"
-                defaultValue=" "
-                margin="normal"/>
-                <br/>
-                <input accept="jpg,jpeg,JPG,JPEG"  id="file" hidden type="file" />
-                <label htmlFor="file">
-                    <Button raised component="span" >
-                        Upload
-                    </Button>
-                </label>
+                hasFeedback>
+                {getFieldDecorator('title', {
+                    rules: [{ required: true, message: 'Please specify the app title!' }],
+                })(
+                    <Input style={{ width: '100%' }} />
+                )}
+            </FormItem>
 
-                <button type="submit" value="Next" id="next" hidden onClick={this.handleOnSubmit()}/>
-                <label htmlFor="next">
-                    <Button raised component="submit">
-                        Next >
-                    </Button>
-                </label>
-        </form>
-        </div>)
+
+
+            <FormItem
+                {...formItemLayout}
+                label=" "
+                hasFeedback>
+                <div className="dropbox" >
+                    {getFieldDecorator('dragger', {
+                        valuePropName: 'file',
+                        getValueFromEvent: this.normFile,
+                        rules: [{ required: true, message:this.errorMsg }],
+                    })(
+                        <Upload.Dragger {...draggerProps} name="file" action="/upload.do">
+                            <p className="ant-upload-drag-icon">
+                                <Icon type="upload" />
+                            </p>
+                            <p className="ant-upload-text">Click or drag {this.file} file to this area to upload</p>
+                            </Upload.Dragger>
+                    )}
+                </div>
+            </FormItem>
+
+            <FormItem {...tailFormItemLayout}>
+                <Button type="primary" htmlType="submit">Continue ></Button>
+            </FormItem>
+        </Form>)
     }
 
 }
 
-export default CreateAppModal;
+
+const WrappedAppCreateStep1 = Form.create()(AppCreateStep1);
+
+export default WrappedAppCreateStep1;
