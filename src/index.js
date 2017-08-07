@@ -20,7 +20,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Publisher from './App';
+import { LocaleProvider } from 'antd';
+import enUS from 'antd/lib/locale-provider/en_US';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<Publisher/>, document.getElementById('root'));
+ReactDOM.render(<LocaleProvider locale={enUS}><Publisher/></LocaleProvider>, document.getElementById('root'));
 registerServiceWorker();

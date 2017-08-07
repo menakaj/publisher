@@ -24,29 +24,51 @@ import Login from "./components/User/Login";
 import AssetView from "./components/Base/AssetView";
 import NotFound from "./components/Error/NotFound";
 import 'antd/dist/antd.css'
+import LoginForm from "./components/User/LoginForm";
 
 class BaseRenderer extends Component {
     constructor() {
         super();
         this.state = {
-            user: "Menaka"
+            user: null
         }
     }
+
+    getCookie(cname) {
+        var name = cname + "=";
+        var cookie = decodeURIComponent(document.cookie);
+        var ca = cookie.split(';');
+        console.log(cookie);
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(cname) === 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        console.log(cookie);
+        return null;
+    }
+
+    componentWillMount() {
+        this.setState({user:this.getCookie("wso2_user")});
+
+    }
+
+
 
     render() {
         if (this.state.user) {
             return (
                 <div className="container">
-                    <Router>
-                        <div>
                             <Header/>
                             <Switch>
-                                <Redirect exact from="/" to="/publisher/assets/apps"/>
-                                <Route exact path="/publisher/assets/apps" component={AssetView}/>
+                                <Redirect exact from="/" to="/assets/apps"/>
+                                <Route exact path="/assets/apps" component={AssetView}/>
                                 <Route component={NotFound}/>
                             </Switch>
-                        </div>
-                    </Router>
 
                 </div>
             );
@@ -62,13 +84,11 @@ class Publisher extends Component {
         return (
             <div>
                 <Router basename="/publisher">
-                    <div>
                         <Switch>
                             <Route path={"/login"} component={Login}/>
                             <Route path={"/logout"} component={Login}/>
                             <Route component={BaseRenderer}/>
                         </Switch>
-                    </div>
                 </Router>
             </div>
         );
