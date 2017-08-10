@@ -15,33 +15,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import React, {Component} from 'react'
 
-class ApplicationView extends Component {
+'use strict';
 
-    constructor(props) {
-        super(props);
-        this.state = {}
-    }
+export default class AuthManager {
 
-    render() {
-        // console.log(this.props.app);
-        const app = this.props.app;
-        return <div>
 
-            <ul>
-                <li>Name: {app.name}</li>
-                <li>Description: {app.description}</li>
-                <li>Version: {app.version}</li>
-                <li>State: {app.state}</li>
-                <li>Ratings: *****</li>
-                <li>Screenshots: </li>
-                <li>Comments: bla bla bla</li>
-            </ul>
-        </div>
+    getAccessToken = function () {
+
+    };
+
+    getRefreshToen = function () {
 
     }
+
+
 
 }
-
-export default ApplicationView;

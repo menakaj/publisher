@@ -18,8 +18,16 @@
 
 import React, {Component} from 'react'
 import {Button, Checkbox, Form, Input} from 'antd'
+import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 
 class SimpleLoginForm extends Component {
+
+    constructor(){
+        super();
+        this.state = {
+           user: null
+        }
+    }
 
     /**
      * Handles login form submit.
@@ -35,10 +43,19 @@ class SimpleLoginForm extends Component {
                  *  store token in the session and redirect to the base.
                  * )
                  * */
+
+
+                this.setState({user: values.userName});
+                document.cookie = "wso2_user=" + values.userName + ";expires=10";
                 console.log('Received values of form: ', values);
+                e.preventDefault();
             }
         });
     };
+
+    componentWillMount() {
+        console.log(this.props.location);
+    }
 
     render() {
         const formItemLayout = {
@@ -53,41 +70,53 @@ class SimpleLoginForm extends Component {
             },
         };
         const {getFieldDecorator} = this.props.form;
-        return (
-            <div>
-                <Form onSubmit={this.handleSubmit} className="login-form">
-                    <Form.Item {...formItemLayout}>
-                        {getFieldDecorator('userName', {
-                            rules: [{required: true, message: 'Please input your username!'}],
-                        })(
-                            <Input placeholder="Username"/>
-                        )}
-                    </Form.Item>
-                    <Form.Item {...formItemLayout}>
-                        {getFieldDecorator('password', {
-                            rules: [{required: true, message: 'Please input your Password!'}],
-                        })(
-                            <Input type="password"
-                                   placeholder="Password"/>
-                        )}
-                    </Form.Item>
-                    <Form.Item {...formItemLayout}>
-                        {getFieldDecorator('remember', {
-                            valuePropName: 'checked',
-                            initialValue: true,
-                        })(
-                            <Checkbox>Remember me</Checkbox>
-                        )}
-                        <a className="login-form-forgot" href="">Forgot password</a>
+        if(this.state.user) {
+            return (
+                <Switch>
+                    <Redirect to="/"/>
+                </Switch>
+            )
+        } else {
+            return (
+                <div>
+                    <Router>
+                        <Form onSubmit={this.handleSubmit} className="login-form">
+                            <Form.Item {...formItemLayout}>
+                                {getFieldDecorator('userName', {
+                                    rules: [{required: true, message: 'Please input your username!'}],
+                                })(
+                                    <Input placeholder="Username"/>
+                                )}
+                            </Form.Item>
+                            <Form.Item {...formItemLayout}>
+                                {getFieldDecorator('password', {
+                                    rules: [{required: true, message: 'Please input your Password!'}],
+                                })(
+                                    <Input type="password"
+                                           placeholder="Password"/>
+                                )}
+                            </Form.Item>
+                            <Form.Item {...formItemLayout}>
+                                {getFieldDecorator('remember', {
+                                    valuePropName: 'checked',
+                                    initialValue: true,
+                                })(
+                                    <Checkbox>Remember me</Checkbox>
+                                )}
+                                <a className="login-form-forgot" href="">Forgot password</a>
 
-                    </Form.Item>
-                    <Form.Item {...formItemLayout}>
-                        <Button type="primary" htmlType="submit" className="login-form-button">
-                            Log in
-                        </Button>
-                    </Form.Item>
-                </Form></div>
-        );
+                            </Form.Item>
+                            <Form.Item {...formItemLayout}>
+                                <Button type="primary" htmlType="submit" className="login-form-button">
+                                    Log in
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </Router>
+                </div>
+            );
+        }
+
     }
 }
 

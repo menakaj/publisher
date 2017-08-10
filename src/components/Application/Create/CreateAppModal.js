@@ -34,6 +34,8 @@ class AppCreateStep1 extends Component {
         this.state = {
             confirmDirty: false,
             showDialog: false,
+            platforms: {},
+            storeTypes: {},
             anchorEl: undefined,
             showMenu: false,
             selectedIndex: 1,
@@ -62,6 +64,15 @@ class AppCreateStep1 extends Component {
         }
 
         return isSupported;
+    }
+
+    componentWillMount() {
+        let platforms = [{value: "ios", label: "iOS"}, {value: "android", label: "Android"},
+            {value: "webclip", label: "Web Clip"}];
+
+        let storeTypes = [{value: "enterprise", label: "Enterprise"}, {value: "public", label: "Public"}];
+
+        this.setState({platforms, storeTypes});
     }
 
     checkConfirm = (rule, value, callback) => {
@@ -96,11 +107,6 @@ class AppCreateStep1 extends Component {
 
     };
 
-    platforms = [{value: "ios", label: "iOS"}, {value: "android", label: "Android"}, {
-        value: "webclip",
-        label: "Web Clip"
-    }];
-    storeTypes = [{value: "enterprise", label: "Enterprise"}, {value: "public", label: "Public"}];
 
     normFile = (e) => {
         console.log('Upload event:', e);
@@ -151,9 +157,9 @@ class AppCreateStep1 extends Component {
                     }],
                 })(
                     <Select placeHolder="Select the app platform" onChange={this.handleSelectChange}>
-                        <Option value="ios">iOS</Option>
-                        <Option value="android">Android</Option>
-                        <Option value="webClip">Web Clip</Option>
+                        {this.state.platforms.map(platform => {
+                            return <Option key={platform.value} value={platform.value}>{platform.label}</Option>
+                        })}
                     </Select>
                 )}
             </FormItem>
@@ -169,8 +175,9 @@ class AppCreateStep1 extends Component {
                     }],
                 })(
                     <Select>
-                        <Option value="enterprise">Enterprise</Option>
-                        <Option value="public">Public</Option>
+                        {this.state.storeTypes.map(storeType => {
+                            return <Option key={storeType.value} value={storeType.value}>{storeType.label}</Option>
+                        })}
                     </Select>
                 )}
             </FormItem>

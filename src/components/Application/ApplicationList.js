@@ -32,13 +32,13 @@ const columns = [{
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    width: 100
+    width: 100,
+    sorter: (a, b) => a.version > b.version
 }, {
     title: 'Version',
     dataIndex: 'version',
     key: 'version',
-    width: 100,
-    sorter: (a, b) => a.version > b.version,
+    width: 100
 }, {
     title: 'Category',
     dataIndex: 'category',
@@ -187,52 +187,36 @@ class ApplicationList extends Component {
         });
     }
 
-
-    handleRequestSort(event, property) {
-        event.stopPropagation();
-        const orderBy = property;
-        let order = 'desc';
-        console.log(property);
-
-        if (this.state.orderBy === property && this.state.order === 'desc') {
-            console.log("In if");
-            order = 'asc';
-        }
-
-        const apps = this.state.apps.sort(
-            (a, b) => (order === 'desc' ? b[orderBy] > a[orderBy] : a[orderBy] > b[orderBy]),
-        );
-
-        console.log(apps);
-        console.log(orderBy + order);
-
-        this.setState({apps: apps, order: order, orderBy: orderBy});
-    };
-
-
     render() {
         console.log(this.props.searchedText);
-        return <div>
 
-            <Table
-                columns={columns}
-                dataSource={this.state.searchedApps}
-                bordered
-                size="middle"
-                onRowClick={this.onRowClicked.bind(this)}
-                scroll={{x: '80%', y: 240}}
-            />
-            <Modal
-                visible={this.state.showDetails}
-                title={this.state.selectedApp.name}
-                onOk={this.handleOK.bind(this)}
-                footer={[
-                    <Button key="back" size="large" onClick={this.handleOK.bind(this)}>OK</Button>,
-                ]}
-            >
-                <ApplicationView app={this.state.selectedApp}/>
-            </Modal>;
-        </div>;
+        if(this.state.apps.length > 0) {
+            return <div>
+                <Table
+                    columns={columns}
+                    dataSource={this.state.searchedApps}
+                    bordered
+                    size="middle"
+                    onRowClick={this.onRowClicked.bind(this)}
+                    scroll={{x: '80%', y: 240}}
+                />
+                <Modal
+                    visible={this.state.showDetails}
+                    title={this.state.selectedApp.name}
+                    onOk={this.handleOK.bind(this)}
+                    footer={[
+                        <Button key="back" size="large" onClick={this.handleOK.bind(this)}>OK</Button>,
+                    ]}
+                >
+                    <ApplicationView app={this.state.selectedApp}/>
+                </Modal>;
+            </div>;
+        }
+
+        return <div>
+            <Button type="primary">Create New Application</Button>
+        </div>
+
     }
 }
 

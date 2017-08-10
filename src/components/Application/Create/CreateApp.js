@@ -17,7 +17,9 @@
  */
 
 import React, {Component} from 'react'
-import {Button, Form, Icon, Input, Modal, Select, Upload} from 'antd'
+import ImagesUploader from 'react-images-uploader';
+
+import {Button, Form, Icon, Input, Modal, Select, Upload, Tag, Tooltip} from 'antd'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -39,6 +41,8 @@ const Option = Select.Option;
  *
  *    -> Create
  *
+ *    Known Issue: Fix image upload form.
+ *
  */
 
 class CreateApp extends Component {
@@ -48,18 +52,62 @@ class CreateApp extends Component {
         this.state = {
             previewVisible: false,
             previewVisibleIcon: false,
+            inputVisible: false,
             previewImage: '',
             previewImageIcon: '',
+            inputValue: '',
             fileList: [],
-            iconImage: []
+            iconImage: [],
+            banner: [],
+            tags: []
         };
     }
+
+    /** ----------------------------- Handling tags ---------------------------------*/
+    handleClose = (removedTag) => {
+        const tags = this.state.tags.filter(tag => tag !== removedTag);
+        console.log(tags);
+        this.setState({ tags });
+    };
+
+    showInput = () => {
+        this.setState({ inputVisible: true }, () => this.input.focus());
+    };
+
+    handleInputChange = (e) => {
+        this.setState({ inputValue: e.target.value });
+    };
+
+    handleInputConfirm = () => {
+        const state = this.state;
+        const inputValue = state.inputValue;
+        let tags = state.tags;
+        if (inputValue && tags.indexOf(inputValue) === -1) {
+            tags = [...tags, inputValue];
+        }
+        console.log(tags);
+        this.setState({
+            tags,
+            inputVisible: false,
+            inputValue: '',
+        });
+    };
+
+    saveInputRef = input => this.input = input;
+
+    /** --------------------------- End handling tags ---------------------------------*/
+
+
+    /** ------------------ Image upload and preview methods -------------------------- */
+
 
     handleCancel = () => this.setState({previewVisible: false});
 
     handleChange = ({fileList}) => this.setState({fileList});
 
-    handleChangeIcon = ({icon}) => this.setState({icon});
+    handleChangeIcon = (fileList) => this.setState({fileList}, console.log(fileList));
+
+    handleChangeBanner = ({banner}) => this.setState({banner});
 
     normFile = (e) => {
         console.log('Upload event:', e.file);
@@ -69,16 +117,7 @@ class CreateApp extends Component {
         return e && e.file;
     };
 
-    handleSubmit = (e) => {
-        e.preventDefault();
-        this.props.form.validateFieldsAndScroll((err, values) => {
-            if (!err) {
-                console.log('Received values of form: ', values);
-            }
-        });
 
-
-    };
 
     handlePreview = (file) => {
         this.setState({
@@ -87,16 +126,26 @@ class CreateApp extends Component {
         });
     };
 
-    handlePreviewIcon = (file) => {
-        this.setState({
-            previewImageIcon: file.url || file.thumbUrl,
-            previewVisibleIcon: true,
+    /** ------------------ End Image upload and preview methods -------------------------- */
+
+    /**
+     * Handles form submit.
+     * ToDo: Create an Application object with data.
+     * */
+    handleSubmit = (e) => {
+        e.preventDefault();
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            if (!err) {
+                console.log('Received values of form: ', values);
+            }
         });
     };
 
     render() {
-        const {previewVisible, previewImageIcon, previewImage, fileList, previewVisibleIcon} = this.state;
+
+        const {fileList, iconImage, tags, inputVisible, inputValue, previewVisible, previewImage} = this.state;
         const {getFieldDecorator} = this.props.form;
+
         const formItemLayout = {
             labelCol: {
                 xs: {span: 24},
@@ -107,6 +156,11 @@ class CreateApp extends Component {
                 sm: {span: 14},
             },
         };
+
+        /**
+         * Layout of the last form item. i.e: Submit button
+         * */
+
         const tailFormItemLayout = {
             wrapperCol: {
                 xs: {
@@ -120,6 +174,16 @@ class CreateApp extends Component {
             },
         };
 
+        /**
+         * Image upload button. In Ui, this will look like follows
+         * ----------
+         * .        .
+         * .        .
+         * .   +    .
+         * .        .
+         * .        .
+         * ----------
+         * */
         const uploadButton = (
             <div>
                 <Icon type="plus"/>
@@ -127,14 +191,30 @@ class CreateApp extends Component {
             </div>
         );
 
+        console.log(fileList);
         return (<div>
-            <h3>{this.props.app.title}</h3>
+            <h1>{this.props.app.title}</h1>
             <Form onSubmit={this.handleSubmit}>
-
                 <FormItem
                     {...formItemLayout}
                     label="Title">
-                    <span className="ant-form-text">{this.props.app.title}</span>
+                    {getFieldDecorator('title', {
+                        rules: [{required: true, message: 'Please specify the Name of the app!'}],
+                    })(
+                        <Input style={{width: '100%'}} initialValue={this.props.app.title}/>
+                    )}
+
+                </FormItem>
+                <FormItem
+                    {...formItemLayout}
+                    label="Short Description"
+                    hasfeedback>
+                    {getFieldDecorator('short_description', {
+                        rules: [{required: true, message: 'Please specify a short description for the app!'}],
+                    })(
+                        <Input.TextArea style={{width: '100%'}} autosize={{minRows: 2}}/>
+                    )}
+
                 </FormItem>
                 <FormItem
                     {...formItemLayout}
@@ -143,7 +223,7 @@ class CreateApp extends Component {
                     {getFieldDecorator('description', {
                         rules: [{required: true, message: 'Please specify the app description!'}],
                     })(
-                        <Input.TextArea style={{width: '100%'}} autosize={{minRows: 2}}/>
+                        <Input.TextArea style={{width: '100%'}} autosize={{minRows: 5}}/>
                     )}
 
                 </FormItem>
@@ -171,11 +251,58 @@ class CreateApp extends Component {
                         </Select>
                     )}
                 </FormItem>
+                <FormItem
+                    {...formItemLayout}
+                    label="Visibility"
+                    hasFeedback>
+                    {getFieldDecorator('visibility', {
+                        rules: [{
+                            required: false, message: 'Please select your app category',
+                        }],
+                    })(
+                        <Input style={{width: '100%'}}/>
+                    )}
+                </FormItem>
+                <FormItem
+                    {...formItemLayout}
+                    label="Tags"
+                    hasFeedback>
+                    {getFieldDecorator('tags', {
+                        rules: [{
+                            required: false, message: 'Please select your app category',
+                        }],
+                    })(
+                        <div>
+                            {tags.map((tag, index) => {
+                                const isLongTag = tag.length > 20;
+                                const tagElem = (
+                                    <Tag key={tag} closable='true' afterClose={() => this.handleClose(tag)}>
+                                        {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+                                    </Tag>
+                                );
+                                return isLongTag ? <Tooltip title={tag}>{tagElem}</Tooltip> : tagElem;
+                            })}
+                            {inputVisible && (
+                                <Input
+                                    ref={this.saveInputRef}
+                                    type="text"
+                                    size="small"
+                                    style={{ width: 78 }}
+                                    value={inputValue}
+                                    onChange={this.handleInputChange}
+                                    onBlur={this.handleInputConfirm}
+                                    onPressEnter={this.handleInputConfirm}
+                                />
+                            )}
+                            {!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+ New Tag</Button>}
+                        </div>
+                    )}
+                </FormItem>
                 <FormItem {...formItemLayout}
                           label="Screenshots"
                           hasFeedback>
                     <div className="clearfix">
-                        {getFieldDecorator('upload', {
+                        {getFieldDecorator('screenshots', {
                             valuePropName: 'file',
                             // getValueFromEvent: this.normFile,
                             rules: [{required: true, message: this.errorMsg}],
@@ -198,11 +325,11 @@ class CreateApp extends Component {
                     label="Icon"
                     hasFeedback>
                     <div className="icon-holder">
-                        {getFieldDecorator('upload', {
-                            valuePropName: 'icon',
+                        {getFieldDecorator('icon', {
+                            valuePropName: 'file',
                             rules: [{required: true, message: this.errorMsg}],
                         })(<Upload
-                            action="//jsonplaceholder.typicode.com/posts/"
+                            action="http://jsonplaceholder.typicode.com/posts/"
                             listType="picture-card"
                             fileList={this.state.iconImage}
                             onChange={this.handleChangeIcon}>
@@ -215,8 +342,8 @@ class CreateApp extends Component {
                     label="Banner"
                     hasFeedback>
                     <div className="app-banner">
-                        {getFieldDecorator('upload', {
-                            valuePropName: 'banner',
+                        {getFieldDecorator('banner', {
+                            valuePropName: 'file',
                             rules: [{required: true, message: this.errorMsg}],
                         })(<Upload
                             action="//jsonplaceholder.typicode.com/posts/"
@@ -227,6 +354,7 @@ class CreateApp extends Component {
                         </Upload>)}
                     </div>
                 </FormItem>
+
                 <FormItem {...tailFormItemLayout}>
                     <Button
                         type="primary"
@@ -234,8 +362,8 @@ class CreateApp extends Component {
                         Create App
                     </Button>
                 </FormItem>
-
-            </Form></div>)
+            </Form>
+        </div>)
     }
 }
 

@@ -15,33 +15,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import React, {Component} from 'react'
 
-class ApplicationView extends Component {
+import axios from 'axios';
 
-    constructor(props) {
-        super(props);
-        this.state = {}
-    }
+'use strict';
 
-    render() {
-        // console.log(this.props.app);
-        const app = this.props.app;
-        return <div>
+/**
+ * This class contains the following component related to app publisher.
+ *
+ * axios client : Basic prototype promis for calling apis in other modules.
+ * */
 
-            <ul>
-                <li>Name: {app.name}</li>
-                <li>Description: {app.description}</li>
-                <li>Version: {app.version}</li>
-                <li>State: {app.state}</li>
-                <li>Ratings: *****</li>
-                <li>Screenshots: </li>
-                <li>Comments: bla bla bla</li>
-            </ul>
-        </div>
+export default class Utils {
 
+
+
+    promisGet = function(url, data) {
+
+    };
+
+    promisPost = function (url, data, headers) {
+        return axios.post(url, data, headers);
     }
 
 }
-
-export default ApplicationView;

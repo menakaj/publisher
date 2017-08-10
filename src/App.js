@@ -24,7 +24,9 @@ import Login from "./components/User/Login";
 import AssetView from "./components/Base/AssetView";
 import NotFound from "./components/Error/NotFound";
 import 'antd/dist/antd.css'
-import LoginForm from "./components/User/LoginForm";
+import CreateApp from "./components/Application/Create/CreateApp"
+
+// let conf = require('Config');
 
 class BaseRenderer extends Component {
     constructor() {
@@ -35,12 +37,12 @@ class BaseRenderer extends Component {
     }
 
     getCookie(cname) {
-        var name = cname + "=";
-        var cookie = decodeURIComponent(document.cookie);
-        var ca = cookie.split(';');
+        let name = cname + "=";
+        let cookie = decodeURIComponent(document.cookie);
+        let ca = cookie.split(';');
         console.log(cookie);
-        for(var i = 0; i <ca.length; i++) {
-            var c = ca[i];
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
             while (c.charAt(0) === ' ') {
                 c = c.substring(1);
             }
@@ -53,10 +55,9 @@ class BaseRenderer extends Component {
     }
 
     componentWillMount() {
-        this.setState({user:this.getCookie("wso2_user")});
+        this.setState({user: this.getCookie("wso2_user")});
 
     }
-
 
 
     render() {

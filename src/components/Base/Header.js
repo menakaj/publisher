@@ -17,14 +17,14 @@
  */
 
 import React, {Component} from 'react'
-import {Avatar, Badge} from 'antd'
+import {Avatar, Badge, Menu, Dropdown} from 'antd'
 
 const styles = {
     title: {
         textAlign: 'center'
     },
     header: {
-        background: '#fff000'
+        background: '#fe752e'
     },
     notify: {
         textDecorationColor: '#aaafff'
@@ -32,14 +32,25 @@ const styles = {
 
 };
 
+
+
 class Header extends Component {
 
     render() {
+
+        let menu =
+    <Menu>
+        <Menu.Item>
+            <a href="/publisher/logout">Logout</a>
+        </Menu.Item>
+    </Menu>;
+
         return <div style={styles.header}>
             <span style={styles.title}><h3>WSO2 IoT App Publisher</h3></span>
             <nav>
                 <Badge count={1}><Avatar shape="circle" icon="notification" /></Badge>
-                <Avatar size="large" icon="user" />
+                <Dropdown overlay={menu}>
+                    <Avatar size="large" icon="user" /></Dropdown>
             </nav>
         </div>;
     }

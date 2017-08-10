@@ -15,33 +15,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import React, {Component} from 'react'
 
-class ApplicationView extends Component {
+export default class Constants {
 
-    constructor(props) {
-        super(props);
-        this.state = {}
-    }
+    static constants = {
+        BASE_URL: "/publisher",
+        BEARER: "Bearer",
+        AUTHENTICATION: "Authentication",
 
-    render() {
-        // console.log(this.props.app);
-        const app = this.props.app;
-        return <div>
+        LOGIN_URL: "",
 
-            <ul>
-                <li>Name: {app.name}</li>
-                <li>Description: {app.description}</li>
-                <li>Version: {app.version}</li>
-                <li>State: {app.state}</li>
-                <li>Ratings: *****</li>
-                <li>Screenshots: </li>
-                <li>Comments: bla bla bla</li>
-            </ul>
-        </div>
-
+        APP_CREATE_ENDPOINT: "",
+        APP_EDIT_ENDPOINT: "",
+        GET_PLATFORMS_ENDPOINT: ""
     }
 
 }
-
-export default ApplicationView;
