@@ -27,7 +27,11 @@ export default class Constants {
 
         APP_CREATE_ENDPOINT: "",
         APP_EDIT_ENDPOINT: "",
-        GET_PLATFORMS_ENDPOINT: ""
+        GET_PLATFORMS_ENDPOINT: "",
+
+        ACTION_CREATE_APP: "CREATE",
+        ACTION_DELETE_APP: "DELETE",
+        ACTION_PROMOTE_APP: "PROMOTE",
     }
 
 }

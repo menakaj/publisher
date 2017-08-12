@@ -19,6 +19,7 @@
 import React, {Component} from 'react'
 import {Button, Modal, Table} from 'antd'
 import ApplicationView from "./View/ApplicationView";
+import AppStore from '../../store/ApplicationStore';
 
 const confirm = (id) => {
     Modal.confirm({
@@ -56,10 +57,11 @@ const columns = [{
     width: 100,
     render: (state) => {
 
+        const created = <span className="created">Created</span>;
         const deleted = <span className="deleted">Deleted</span>;
-        const InProgress = <sapn className="inProgress">In Progress</sapn>;
+        const inReview = <sapn className="inProgress">In Review</sapn>;
         const published = <span className="published">Published</span>;
-        return (state === 'Deleted'?deleted:(state === 'Published'?published:InProgress))
+        return (state === 'Deleted'?deleted:(state === 'Published'?published:(state=== 'Created'?created:inReview)))
     }
 },
     {
@@ -107,10 +109,14 @@ class ApplicationList extends Component {
     }
 
     componentWillMount() {
+
         this.setState({apps: this.getApps(), searchedApps: this.getApps()});
     }
 
     componentDidMount() {
+        AppStore.on("change", () => {
+            this.setState({apps: AppStore.getAllApps()})
+        });
         console.log("Did mount");
     }
 
@@ -136,40 +142,7 @@ class ApplicationList extends Component {
          * Call backend api and get the list of apps.
          * axios.get().then()
          * */
-        return [
-            {
-                name: "App1",
-                category: "c1",
-                version: "5.0",
-                os: "Android",
-                description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
-                state: "Published"
-            },
-            {
-                name: "App2",
-                category: "c3",
-                version: "4.0",
-                os: "iOS",
-                description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
-                state: "InReview"
-            },
-            {
-                name: "App3",
-                category: "c1",
-                version: "2.0",
-                os: "iOS",
-                description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
-                state: "Published"
-            },
-            {
-                name: "App4",
-                category: "c2",
-                version: "14.0",
-                os: "WebClip",
-                description: "jjflkjdfd f;djlfj;dsjf; lsafjf ",
-                state: "Deleted"
-            }
-        ]
+        return AppStore.getAllApps();
 
     }
 
@@ -189,7 +162,6 @@ class ApplicationList extends Component {
 
     render() {
         console.log(this.props.searchedText);
-
         if(this.state.apps.length > 0) {
             return <div>
                 <Table

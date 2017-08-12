@@ -16,6 +16,7 @@
  * under the License.
  */
 
-class Application {
+import {Dispatcher} from 'flux';
 
-}
+export default new Dispatcher;
+

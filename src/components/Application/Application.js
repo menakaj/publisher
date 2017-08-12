@@ -21,7 +21,7 @@ import React, {Component} from 'react'
 class Application extends Component {
 
     constructor() {
-        super()
+        super();
         this.handleOnClickRow.bind(this)
     }
 
